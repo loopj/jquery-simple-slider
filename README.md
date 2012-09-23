@@ -1,4 +1,4 @@
-SimpleSlider: An Unobtrusive Numerical Slider for jQuery
+SimpleSlider: Unobtrusive Numerical Slider for jQuery
 ========================================================
 
 Overview
