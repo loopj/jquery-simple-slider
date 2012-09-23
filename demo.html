@@ -1,0 +1,102 @@
+<html>
+<head>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="simple-slider.js"></script>
+</head>
+
+<body>
+  <h2>Basic Example</h2>
+  <input type="text" data-slider="true">
+
+  <h2>Steps</h2>
+  <input type="text" data-slider="true" data-slider-step="0.1">
+
+  <h2>Range</h2>
+  <input type="text" data-slider="true" data-slider-range="10,1000">
+
+  <h2>Range &amp; Steps</h2>
+  <input type="text" data-slider="true" data-slider-range="100,500" data-slider-step="100">
+
+  <h2>Range, Steps &amp; Snap</h2>
+  <input type="text" data-slider="true" data-slider-range="100,500" data-slider-step="100" data-slider-snap="true">
+
+  <h2>Predefined List of Values</h2>
+  <input type="text" data-slider="true" data-slider-values="0,100,500,800,2000">
+
+  <h2>Predefined List &amp; Snap</h2>
+  <input type="text" data-slider="true" data-slider-values="0,100,500,800,2000" data-slider-snap="true">
+
+  <h2>Predefined List, Equal Steps &amp; Snap</h2>
+  <input type="text" data-slider="true" data-slider-values="0,100,500,800,2000" data-equal-steps="true" data-slider-snap="true">
+
+  <script>
+  $("[data-slider]")
+    .each(function () {
+      var input = $(this);
+      $("<span>")
+        .addClass("output")
+        .insertAfter($(this));
+    })
+    .change(function (event) {
+      $(this).next().html(event.value.toFixed(3));
+    });
+  </script>
+
+
+  <style>
+  /* Main slider styles */
+  .slider {
+    width: 300px;
+  }
+  
+  .slider > .dragger {
+    background: -webkit-linear-gradient(top, #8DCA09, #72A307);
+    border: 1px solid #496805;
+    box-shadow: inset 0 2px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(0,0,0,0.2);
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+  }
+
+  .slider > .dragger:hover {
+    background: -webkit-linear-gradient(top, #8DCA09, #8DCA09);
+  }
+
+  .slider > .track {
+    background: -webkit-linear-gradient(top, #bbb, #ddd);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #aaa;
+    background-color: #aaa;
+    height: 12px;
+    border-radius: 8px;
+  }
+    
+
+  /* Stuff to render this page nicely */
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  .slider, .output {
+    float: left;
+  }
+
+  .output {
+    color: #888;
+    font-size: 14px;
+    padding-top: 1px;
+    margin-left: 5px;
+  }
+
+  h2 {
+    clear: both;
+    margin: 60px 0 10px 0;
+    font-size: 16px;
+  }
+
+  h2:first-of-type {
+    margin-top: 0;
+  }
+  </style>
+</body>
+</html>
