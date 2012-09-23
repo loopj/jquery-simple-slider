@@ -1,9 +1,6 @@
 SimpleSlider: Unobtrusive Numerical Slider for jQuery
 ========================================================
 
-Overview
---------
-
 SimpleSlider is a jQuery plugin for turning your text inputs into draggable 
 numerical sliders.
 
