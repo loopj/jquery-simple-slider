@@ -1,0 +1,32 @@
+{
+  "name"            : "simple-slider",
+  "title"           : "jQuery Simple Slider",
+  "version"         : "1.0.0",
+  "homepage"        : "http://loopj.com/jquery-simple-slider",
+  "author"          : {
+    "name"  : "James Smith",
+    "email" : "james@loopj.com",
+    "url"   : "http://loopj.com"
+  },
+  "repository" : {
+    "type" : "git",
+    "url"  : "https://github.com/loopj/jquery-simple-slider.git"
+  },
+  "description" : "",
+  "keywords": [],
+  "bugs" : {
+    "url" : "https://github.com/loopj/jquery-simple-slider/issues"
+  },
+  "licenses": [{
+    "type": "MIT",
+    "url" : "http://mit-license.org/"
+  }],
+  "devDependencies" : {
+    "grunt"                : "0.3.15",
+    "grunt-coffee"         : "0.0.6",
+    "grunt-growl"          : "0.1.2"
+  },
+  "scripts": {
+    "test": "grunt"
+  }
+}
