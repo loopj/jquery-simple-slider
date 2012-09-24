@@ -29,12 +29,12 @@
       # Create the slider canvas
       @slider = $("<div>")
         .addClass("slider")
-        .attr("id", @input.attr("id") + "-slider")
         .css
           position: "relative"
           userSelect: "none"
           boxSizing: "border-box"
         .insertBefore @input
+      @slider.attr("id", @input.attr("id") + "-slider") if @input.attr("id")
 
       # Create the track
       @track = $("<div>")
@@ -45,6 +45,8 @@
           width: "100%"
           userSelect: "none"
           cursor: "pointer"
+          height: "4px"
+          backgroundColor: "#bbb"
         .appendTo @slider
 
       # Create the slider drag target
@@ -55,6 +57,9 @@
           top: "50%"
           userSelect: "none"
           cursor: "pointer"
+          width: "12px"
+          height: "12px"
+          backgroundColor: "#aa0000"
         .appendTo @slider
 
       # Adjust dimensions now elements are in the DOM

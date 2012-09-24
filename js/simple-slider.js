@@ -23,23 +23,31 @@ var __slice = [].slice,
       };
       this.settings = $.extend({}, this.defaultOptions, options);
       this.input.hide();
-      this.slider = $("<div>").addClass("slider").attr("id", this.input.attr("id") + "-slider").css({
+      this.slider = $("<div>").addClass("slider").css({
         position: "relative",
         userSelect: "none",
         boxSizing: "border-box"
       }).insertBefore(this.input);
+      if (this.input.attr("id")) {
+        this.slider.attr("id", this.input.attr("id") + "-slider");
+      }
       this.track = $("<div>").addClass("track").css({
         position: "absolute",
         top: "50%",
         width: "100%",
         userSelect: "none",
-        cursor: "pointer"
+        cursor: "pointer",
+        height: "4px",
+        backgroundColor: "#bbb"
       }).appendTo(this.slider);
       this.dragger = $("<div>").addClass("dragger").css({
         position: "absolute",
         top: "50%",
         userSelect: "none",
-        cursor: "pointer"
+        cursor: "pointer",
+        width: "12px",
+        height: "12px",
+        backgroundColor: "#aa0000"
       }).appendTo(this.slider);
       this.slider.css({
         minHeight: this.dragger.outerHeight(),

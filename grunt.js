@@ -63,6 +63,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('build', 'coffee min');
-  grunt.registerTask('serve', 'server watch');
+  grunt.registerTask('serve', 'server watch:coffee');
   grunt.registerTask('default', 'build');
 };
