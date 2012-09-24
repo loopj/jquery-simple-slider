@@ -1,7 +1,19 @@
 <html>
 <head>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-  <script src="src/simple-slider.js"></script>
+  <script src="js/simple-slider.js"></script>
+  <link href="css/simple-slider.css" rel="stylesheet" type="text/css" />
+  
+  <!-- These styles are only used for this page, not required for the slider -->
+  <style>
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .slider, .output { float: left; }
+  .output { color: #888; font-size: 14px; padding-top: 1px; margin-left: 5px; }
+  h1 { font-size: 20px; }
+  h2 { clear: both; margin: 0; margin-bottom: 5px; font-size: 16px; }
+  p { font-size: 15px; margin-bottom: 30px; }
+  h2:first-of-type { margin-top: 0; }
+  </style>
 </head>
 
 <body>
@@ -12,6 +24,9 @@
 
   <h2>Basic Example</h2>
   <input type="text" data-slider="true">
+
+  <h2>Predefined Value</h2>
+  <input type="text" value="0.2" data-slider="true">
 
   <h2>Steps</h2>
   <input type="text" data-slider="true" data-slider-step="0.1">
@@ -46,94 +61,5 @@
       $(this).next().html(data.value.toFixed(3));
     });
   </script>
-
-
-  <style>
-  /* Main slider styles */
-  .slider {
-    width: 300px;
-    margin-bottom: 30px;
-  }
-  
-  .slider > .dragger {
-    background: #8DCA09;
-    background: -webkit-linear-gradient(top, #8DCA09, #72A307);
-    background: -moz-linear-gradient(top, #8DCA09, #72A307);
-    background: linear-gradient(top, #8DCA09, #72A307);
-
-    -webkit-box-shadow: inset 0 2px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(0,0,0,0.2);
-    -moz-box-shadow: inset 0 2px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(0,0,0,0.2);
-    box-shadow: inset 0 2px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(0,0,0,0.2);
-
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-
-    border: 1px solid #496805;
-    width: 16px;
-    height: 16px;
-  }
-
-  .slider > .dragger:hover {
-    background: -webkit-linear-gradient(top, #8DCA09, #8DCA09);
-  }
-
-  .slider > .track {
-    background: #ccc;
-    background: -webkit-linear-gradient(top, #bbb, #ddd);
-    background: -moz-linear-gradient(top, #bbb, #ddd);
-    background: linear-gradient(top, #bbb, #ddd);
-
-    -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
-
-    border: 1px solid #aaa;
-    height: 12px;
-  }
-    
-
-
-
-  /* Styles below are just to render this page, not needed for the slider */
-  body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-
-  .slider, .output {
-    float: left;
-  }
-
-  .output {
-    color: #888;
-    font-size: 14px;
-    padding-top: 1px;
-    margin-left: 5px;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  h2 {
-    clear: both;
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 16px;
-  }
-  
-  p {
-    font-size: 15px;
-    margin-bottom: 30px;
-  }
-
-  h2:first-of-type {
-    margin-top: 0;
-  }
-  </style>
 </body>
 </html>
