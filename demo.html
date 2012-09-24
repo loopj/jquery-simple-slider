@@ -42,8 +42,8 @@
         .addClass("output")
         .insertAfter($(this));
     })
-    .change(function (event) {
-      $(this).next().html(event.value.toFixed(3));
+    .bind("slider:ready slider:changed", function (event, data) {
+      $(this).next().html(data.value.toFixed(3));
     });
   </script>
 

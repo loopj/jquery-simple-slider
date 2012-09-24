@@ -14,7 +14,8 @@ var __slice = [].slice,
   SimpleSlider = (function() {
 
     function SimpleSlider(input, options) {
-      var _this = this;
+      var ratio,
+        _this = this;
       this.input = input;
       this.defaultOptions = {
         animate: true,
@@ -93,6 +94,12 @@ var __slice = [].slice,
         this.value = this.nearestValidValue(this.input.val());
       }
       this.setSliderPositionFromValue(this.value);
+      ratio = this.valueToRatio(this.value);
+      this.input.trigger("slider:ready", {
+        value: this.value,
+        ratio: ratio,
+        position: ratio * this.slider.outerWidth()
+      });
     }
 
     SimpleSlider.prototype.setRatio = function(ratio) {

@@ -62,6 +62,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-growl');
 
   // Default task.
-  grunt.registerTask('default', 'coffee growl:coffee');
+  grunt.registerTask('build', 'coffee min');
   grunt.registerTask('serve', 'server watch');
+  grunt.registerTask('default', 'build');
 };

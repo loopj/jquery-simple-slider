@@ -123,6 +123,13 @@
 
       @setSliderPositionFromValue(@value)
 
+      # We are ready to go
+      ratio = @valueToRatio(@value)
+      @input.trigger "slider:ready", 
+        value: @value
+        ratio: ratio
+        position: ratio * @slider.outerWidth()
+
     # Set the ratio (value between 0 and 1) of the slider.
     # Exposed via el.slider("setRatio", ratio)
     setRatio: (ratio) ->
