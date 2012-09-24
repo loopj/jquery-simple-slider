@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-          'src/<%= pkg.name %>.js': 'src/*.coffee'
+          'js/<%= pkg.name %>.js': 'js/*.coffee'
         },
 
         options: {
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 
     watch: {
       coffee: {
-        files: ['src/*.coffee'],
+        files: ['js/*.coffee'],
         tasks: 'coffee growl:coffee'
       }
     },
@@ -43,15 +43,15 @@ module.exports = function(grunt) {
 
     min: {
       dist: {
-        src: ['<banner:meta.banner>', 'src/<%= pkg.name %>.js'],
-        dest: 'src/<%= pkg.name %>.min.js'
+        src: ['<banner:meta.banner>', 'js/<%= pkg.name %>.js'],
+        dest: 'js/<%= pkg.name %>.min.js'
       }
     },
     
     compress: {
       zip: {
         files: {
-          "<%= pkg.name %>-<%= pkg.version %>.zip": ["src/**", "demo.html", "README.md"]
+          "<%= pkg.name %>-<%= pkg.version %>.zip": ["js/**", "demo.html", "README.md"]
         }
       }
     }
