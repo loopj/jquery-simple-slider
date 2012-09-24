@@ -1,50 +1,67 @@
-/*global module:false*/
 module.exports = function(grunt) { 
-  // Project configuration.
   grunt.initConfig({
-    pkg : '<json:package.json>',
+    pkg: '<json:package.json>',
 
-    meta : {
-      banner : '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
-        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+    meta: {
+      banner:
+        '/*\n' + 
+        ' * <%= pkg.title || pkg.name %>: <%= pkg.description %>\n' +
+        ' * Version <%= pkg.version %>\n' + 
+        ' *\n' +
+        ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> (<%= pkg.author.url %>)\n' +
+        ' *\n' +
+        ' * Licensed under the <%= pkg.licenses[0].type %> license (<%= pkg.licenses[0].url %>)\n' +
+        ' *\n' + 
+        ' */\n'
     },
 
-    coffee : {
-      plugin : {
-        src  : 'src/*.coffee',
-        dest : 'src'
+    coffee: {
+      compile: {
+        files: {
+          'src/<%= pkg.name %>.js': 'src/*.coffee'
+        },
+
+        options: {
+          bare: true
+        }
       }
     },
 
-    watch : {
-      coffee : {
-        files: ['<config:coffee.plugin.src>'],
+    watch: {
+      coffee: {
+        files: ['src/*.coffee'],
         tasks: 'coffee growl:coffee'
       }
     },
 
-    growl : {
-      coffee : {
-        title   : 'CoffeeScript',
-        message : 'Compiled successfully'
+    growl: {
+      coffee: {
+        title: 'CoffeeScript',
+        message: 'Compiled successfully'
       }
     },
 
-    min : {
-      dist : {
-        src  : ['<banner:meta.banner>', 'src/<%= pkg.name %>.js'],
-        dest : 'src/<%= pkg.name %>.min.js'
+    min: {
+      dist: {
+        src: ['<banner:meta.banner>', 'src/<%= pkg.name %>.js'],
+        dest: 'src/<%= pkg.name %>.min.js'
+      }
+    },
+    
+    compress: {
+      zip: {
+        files: {
+          "<%= pkg.name %>-<%= pkg.version %>.zip": ["src/**", "demo.html", "README.md"]
+        }
       }
     }
   });
 
   // Lib tasks.
+  grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-growl');
-  grunt.loadNpmTasks('grunt-coffee');
 
   // Default task.
-  grunt.registerTask('default', 'growl coffee');  
+  grunt.registerTask('default', 'coffee growl:coffee');
+  grunt.registerTask('serve', 'server watch');
 };

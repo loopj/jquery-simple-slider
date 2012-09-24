@@ -1,3 +1,11 @@
+###
+ jQuery Simple Slider
+
+ Copyright (c) 2012 James Smith (http://loopj.com)
+
+ Licensed under the MIT license (http://mit-license.org/)
+###
+
 (($, window) ->
 
   #
