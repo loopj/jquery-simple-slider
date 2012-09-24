@@ -20,15 +20,19 @@
       @defaultOptions =
         animate: true
         snapMid: false
+        classPrefix: null
+        classSuffix: null
+        theme: null
 
       @settings = $.extend({}, @defaultOptions, options)
+      @settings.classSuffix = "-#{@settings.theme}" if @settings.theme
 
       # Hide the original input
       @input.hide()
 
       # Create the slider canvas
       @slider = $("<div>")
-        .addClass("slider")
+        .addClass("slider"+(@settings.classSuffix || ""))
         .css
           position: "relative"
           userSelect: "none"
@@ -45,8 +49,6 @@
           width: "100%"
           userSelect: "none"
           cursor: "pointer"
-          height: "4px"
-          backgroundColor: "#bbb"
         .appendTo @slider
 
       # Create the slider drag target
@@ -57,9 +59,6 @@
           top: "50%"
           userSelect: "none"
           cursor: "pointer"
-          width: "12px"
-          height: "12px"
-          backgroundColor: "#aa0000"
         .appendTo @slider
 
       # Adjust dimensions now elements are in the DOM
@@ -134,6 +133,7 @@
         value: @value
         ratio: ratio
         position: ratio * @slider.outerWidth()
+        el: @slider
 
     # Set the ratio (value between 0 and 1) of the slider.
     # Exposed via el.slider("setRatio", ratio)
@@ -288,6 +288,7 @@
         ratio: ratio
         position: ratio * @slider.outerWidth()
         trigger: trigger
+        el: @slider
 
       @input
         .val(value)
@@ -325,16 +326,11 @@
 
       allowedValues = $el.data "slider-values"
       settings.allowedValues = (parseFloat(x) for x in allowedValues.split(",")) if allowedValues
-
-      range = $el.data "slider-range"
-      settings.range = range.split "," if range
-
-      step = $el.data "slider-step"
-      settings.step = step if step
-
-      settings.snap = $el.data "slider-snap"
-
-      settings.equalSteps = $el.data "slider-equal-steps"
+      settings.range = $el.data("slider-range").split(",") if $el.data("slider-range")
+      settings.step = $el.data("slider-step") if $el.data("slider-step")
+      settings.snap = $el.data("slider-snap")
+      settings.equalSteps = $el.data("slider-equal-steps")
+      settings.theme = $el.data("slider-theme") if $el.data("slider-theme")
 
       # Activate the plugin
       $el.simpleSlider settings

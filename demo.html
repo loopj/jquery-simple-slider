@@ -1,13 +1,16 @@
 <html>
 <head>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
   <script src="js/simple-slider.js"></script>
+
   <link href="css/simple-slider.css" rel="stylesheet" type="text/css" />
+  <link href="css/simple-slider-volume.css" rel="stylesheet" type="text/css" />  
   
   <!-- These styles are only used for this page, not required for the slider -->
   <style>
   body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
-  .slider, .output { float: left; }
+  [class^=slider], .output { float: left; }
   .output { color: #888; font-size: 14px; padding-top: 1px; margin-left: 5px; }
   h1 { font-size: 20px; }
   h2 { clear: both; margin: 0; margin-bottom: 5px; font-size: 16px; }
@@ -22,8 +25,12 @@
     Here are a few examples of the functionality available in Simple Slider.
   </p>
 
+
   <h2>Basic Example</h2>
   <input type="text" data-slider="true">
+
+  <h2>Basic Example (Themed)</h2>
+  <input type="text" data-slider="true" data-slider-theme="volume">
 
   <h2>Predefined Value</h2>
   <input type="text" value="0.2" data-slider="true">
@@ -49,6 +56,7 @@
   <h2>Predefined List, Equal Steps &amp; Snap</h2>
   <input type="text" data-slider="true" data-slider-values="0,100,500,800,2000" data-slider-equal-steps="true" data-slider-snap="true">
 
+
   <script>
   $("[data-slider]")
     .each(function () {
@@ -58,7 +66,9 @@
         .insertAfter($(this));
     })
     .bind("slider:ready slider:changed", function (event, data) {
-      $(this).next().html(data.value.toFixed(3));
+      $(this)
+        .nextAll(".output:first")
+          .html(data.value.toFixed(3));
     });
   </script>
 </body>

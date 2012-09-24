@@ -19,11 +19,17 @@ var __slice = [].slice,
       this.input = input;
       this.defaultOptions = {
         animate: true,
-        snapMid: false
+        snapMid: false,
+        classPrefix: null,
+        classSuffix: null,
+        theme: null
       };
       this.settings = $.extend({}, this.defaultOptions, options);
+      if (this.settings.theme) {
+        this.settings.classSuffix = "-" + this.settings.theme;
+      }
       this.input.hide();
-      this.slider = $("<div>").addClass("slider").css({
+      this.slider = $("<div>").addClass("slider" + (this.settings.classSuffix || "")).css({
         position: "relative",
         userSelect: "none",
         boxSizing: "border-box"
@@ -36,18 +42,13 @@ var __slice = [].slice,
         top: "50%",
         width: "100%",
         userSelect: "none",
-        cursor: "pointer",
-        height: "4px",
-        backgroundColor: "#bbb"
+        cursor: "pointer"
       }).appendTo(this.slider);
       this.dragger = $("<div>").addClass("dragger").css({
         position: "absolute",
         top: "50%",
         userSelect: "none",
-        cursor: "pointer",
-        width: "12px",
-        height: "12px",
-        backgroundColor: "#aa0000"
+        cursor: "pointer"
       }).appendTo(this.slider);
       this.slider.css({
         minHeight: this.dragger.outerHeight(),
@@ -106,7 +107,8 @@ var __slice = [].slice,
       this.input.trigger("slider:ready", {
         value: this.value,
         ratio: ratio,
-        position: ratio * this.slider.outerWidth()
+        position: ratio * this.slider.outerWidth(),
+        el: this.slider
       });
     }
 
@@ -262,7 +264,8 @@ var __slice = [].slice,
         value: value,
         ratio: ratio,
         position: ratio * this.slider.outerWidth(),
-        trigger: trigger
+        trigger: trigger,
+        el: this.slider
       };
       return this.input.val(value).trigger($.Event("change", eventData)).trigger("slider:changed", eventData);
     };
@@ -289,7 +292,7 @@ var __slice = [].slice,
   });
   return $(function() {
     return $("[data-slider]").each(function() {
-      var $el, allowedValues, range, settings, step, x;
+      var $el, allowedValues, settings, x;
       $el = $(this);
       settings = {};
       allowedValues = $el.data("slider-values");
@@ -305,16 +308,17 @@ var __slice = [].slice,
           return _results;
         })();
       }
-      range = $el.data("slider-range");
-      if (range) {
-        settings.range = range.split(",");
+      if ($el.data("slider-range")) {
+        settings.range = $el.data("slider-range").split(",");
       }
-      step = $el.data("slider-step");
-      if (step) {
-        settings.step = step;
+      if ($el.data("slider-step")) {
+        settings.step = $el.data("slider-step");
       }
       settings.snap = $el.data("slider-snap");
       settings.equalSteps = $el.data("slider-equal-steps");
+      if ($el.data("slider-theme")) {
+        settings.theme = $el.data("slider-theme");
+      }
       return $el.simpleSlider(settings);
     });
   });
