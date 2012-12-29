@@ -3,6 +3,8 @@
 
  Copyright (c) 2012 James Smith (http://loopj.com)
 
+ Forked by Greg Avola (http://gregavola.me) to add touch.
+
  Licensed under the MIT license (http://mit-license.org/)
 */
 
@@ -63,7 +65,7 @@ var __slice = [].slice,
         marginLeft: this.dragger.outerWidth() / -2
       });
 
-      // checkin to see if the browser has touch, if not use mouseover insted of touchend
+      // checkin to see if the browser has touch, if not use mouseover insted of touchend (please note the WP8 is not supported)
       if('ontouchstart' in window) {
           this.track.on("touchstart", function(e) {
            if (e.touches[0]) {    
