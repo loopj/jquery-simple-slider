@@ -18,25 +18,30 @@ var __slice = [].slice,
         _this = this;
       this.input = input;
       this.defaultOptions = {
-        animate: true,
+        animate: false,
         snapMid: false,
         classPrefix: null,
+
         classSuffix: null,
         theme: null
       };
       this.settings = $.extend({}, this.defaultOptions, options);
+
       if (this.settings.theme) {
         this.settings.classSuffix = "-" + this.settings.theme;
       }
       this.input.hide();
+
       this.slider = $("<div>").addClass("slider" + (this.settings.classSuffix || "")).css({
         position: "relative",
         userSelect: "none",
         boxSizing: "border-box"
       }).insertBefore(this.input);
+
       if (this.input.attr("id")) {
         this.slider.attr("id", this.input.attr("id") + "-slider");
       }
+
       this.track = $("<div>").addClass("track").css({
         position: "absolute",
         top: "50%",
@@ -44,6 +49,7 @@ var __slice = [].slice,
         userSelect: "none",
         cursor: "pointer"
       }).appendTo(this.slider);
+
       this.dragger = $("<div>").addClass("dragger").css({
         position: "absolute",
         top: "50%",
@@ -62,39 +68,114 @@ var __slice = [].slice,
         marginTop: this.dragger.outerWidth() / -2,
         marginLeft: this.dragger.outerWidth() / -2
       });
-      this.track.mousedown(function(e) {
-        if (e.which !== 1) {
-          return;
-        }
-        _this.domDrag(e.pageX, e.pageY, true);
-        _this.dragging = true;
-        return false;
-      });
-      this.dragger.mousedown(function(e) {
-        if (e.which !== 1) {
-          return;
-        }
-        _this.dragging = true;
-        _this.dragger.addClass("dragging");
-        _this.domDrag(e.pageX, e.pageY);
-        return false;
-      });
-      $(window).mousemove(function(e) {
-        if (_this.dragging) {
+
+      if('ontouchstart' in window) {  
+          this.track.on("touchstart", function(e) {
+            if (jQuery) {
+              if (e.originalEvent.touches[0]) {    
+                _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+                _this.dragging = true;
+              }
+            }
+            else {
+              if (e.touches[0]) {    
+                _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+                _this.dragging = true;
+              }
+            }
+            
+            return false;
+        });
+        
+        this.dragger.on("touchstart", function(e) {
+
+          if (jQuery) {
+            if (e.originalEvent.touches[0]) {
+              _this.dragging = true;
+              _this.dragger.addClass("dragging");
+              _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+            }
+            return false;
+          }
+          else {
+            console.log(jQuery);
+            if (e.touches[0]) {
+              _this.dragging = true;
+              _this.dragger.addClass("dragging");
+              _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+            }
+            return false;
+          }
+        });
+
+        $(window).on("touchmove", function(e) {
+            if (jQuery) {
+              if (_this.dragging) {
+                  _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+                  return $("body").css({
+                    cursor: "pointer"
+                });
+              }
+            }
+            else {
+                if (_this.dragging) {
+                  _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+                  return $("body").css({
+                    cursor: "pointer"
+                  });
+                }
+            }
+        }); 
+
+        $(window).on("touchend", function(e) {
+          if (_this.dragging) {
+            _this.dragging = false;
+            _this.dragger.removeClass("dragging");
+            return $("body").css({
+              cursor: "auto"
+            });
+          }
+        }); 
+      }
+      else {
+
+        this.track.mousedown(function(e) {
+          if (e.which !== 1) {
+            return;
+          }
+          _this.domDrag(e.pageX, e.pageY, true);
+          _this.dragging = true;
+          return false;
+        });
+
+        this.dragger.mousedown(function(e) {
+          if (e.which !== 1) {
+            return;
+          }
+          _this.dragging = true;
+          _this.dragger.addClass("dragging");
           _this.domDrag(e.pageX, e.pageY);
-          return $("body").css({
-            cursor: "pointer"
-          });
-        }
-      }).mouseup(function(e) {
-        if (_this.dragging) {
-          _this.dragging = false;
-          _this.dragger.removeClass("dragging");
-          return $("body").css({
-            cursor: "auto"
-          });
-        }
-      });
+          return false;
+        });
+
+        $(window).mousemove(function(e) {
+          if (_this.dragging) {
+            _this.domDrag(e.pageX, e.pageY);
+            return $("body").css({
+              cursor: "pointer"
+            });
+          }
+        }).mouseup(function(e) {
+          if (_this.dragging) {
+            _this.dragging = false;
+            _this.dragger.removeClass("dragging");
+            return $("body").css({
+              cursor: "auto"
+            });
+          }
+        });
+      }
+
       this.pagePos = 0;
       if (this.input.val() === "") {
         this.value = this.getRange().min;
@@ -151,13 +232,19 @@ var __slice = [].slice,
     };
 
     SimpleSlider.prototype.setSliderPosition = function(position, animate) {
+
       if (animate == null) {
         animate = false;
       }
       if (animate && this.settings.animate) {
+        console.log(animating);  
+
         return this.dragger.animate({
           left: position
         }, 200);
+
+        //this.dragger.style.webkitTransform = "translate("+position+"px,0)";
+
       } else {
         return this.dragger.css({
           left: position
@@ -290,7 +377,9 @@ var __slice = [].slice,
       });
     }
   });
+
   return $(function() {
+
     return $("[data-slider]").each(function() {
       var $el, allowedValues, settings, x;
       $el = $(this);
@@ -321,5 +410,6 @@ var __slice = [].slice,
       }
       return $el.simpleSlider(settings);
     });
+
   });
 })(this.jQuery || this.Zepto, this);
