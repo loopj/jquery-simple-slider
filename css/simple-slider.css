@@ -42,3 +42,13 @@
   border: 1px solid #aaa;
   height: 4px;
 }
+
+.slider.vertical{
+  height:100px;
+  width: none;
+  -moz-transform:rotate(90deg);
+  -webkit-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
+  -ms-transform:rotate(90deg);
+  filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}

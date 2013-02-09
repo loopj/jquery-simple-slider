@@ -3,6 +3,10 @@
 
  Copyright (c) 2012 James Smith (http://loopj.com)
 
+ Forked by Greg Avola (http://gregavola.me) to add touch.
+
+ Forked by Nicolas Waissbluth (http://twitter.com/waissbluth) to add vertical mode
+
  Licensed under the MIT license (http://mit-license.org/)
 */
 
@@ -21,9 +25,9 @@ var __slice = [].slice,
         animate: false,
         snapMid: false,
         classPrefix: null,
-
         classSuffix: null,
-        theme: null
+        theme: null,
+        vertical: false
       };
       this.settings = $.extend({}, this.defaultOptions, options);
 
@@ -35,8 +39,15 @@ var __slice = [].slice,
       this.slider = $("<div>").addClass("slider" + (this.settings.classSuffix || "")).css({
         position: "relative",
         userSelect: "none",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        cursor: "pointer"
       }).insertBefore(this.input);
+      
+      //Rotate if set to true
+      if(this.settings.vertical){
+        this.slider.addClass("vertical")
+        this.slider.css('height', this.slider.css('width'))
+      }
 
       if (this.input.attr("id")) {
         this.slider.attr("id", this.input.attr("id") + "-slider");
@@ -98,7 +109,7 @@ var __slice = [].slice,
             return false;
           }
           else {
-            console.log(jQuery);
+            //console.log(jQuery);
             if (e.touches[0]) {
               _this.dragging = true;
               _this.dragger.addClass("dragging");
@@ -138,8 +149,8 @@ var __slice = [].slice,
         }); 
       }
       else {
-
-        this.track.mousedown(function(e) {
+    //Changed from .track to .slider to get larger touch area
+        this.slider.mousedown(function(e) {
           if (e.which !== 1) {
             return;
           }
@@ -215,9 +226,17 @@ var __slice = [].slice,
       if (animate == null) {
         animate = false;
       }
-      pagePos = pageX - this.slider.offset().left;
-      pagePos = Math.min(this.slider.outerWidth(), pagePos);
-      pagePos = Math.max(0, pagePos);
+      if(this.settings.vertical){
+        pagePos = pageY - this.slider.offset().top;
+        pagePos = Math.min(this.slider.outerWidth(), pagePos);
+        pagePos = Math.max(0, pagePos);       
+      }
+      else{
+        pagePos = pageX - this.slider.offset().left;
+        pagePos = Math.min(this.slider.outerWidth(), pagePos);
+        pagePos = Math.max(0, pagePos);
+      }
+      
       if (this.pagePos !== pagePos) {
         this.pagePos = pagePos;
         ratio = pagePos / this.slider.outerWidth();
@@ -237,7 +256,7 @@ var __slice = [].slice,
         animate = false;
       }
       if (animate && this.settings.animate) {
-        console.log(animating);  
+        //console.log(animating);  
 
         return this.dragger.animate({
           left: position
@@ -381,8 +400,17 @@ var __slice = [].slice,
   return $(function() {
 
     return $("[data-slider]").each(function() {
-      var $el, allowedValues, settings, x;
-      $el = $(this);
+      
+    return generateSlider(this)
+    });
+
+  });
+})(this.jQuery || this.Zepto, this);
+
+//Receives the input element to convert to slider
+function generateSlider(element){
+    var $el, allowedValues, settings, x;
+      $el = $(element);
       settings = {};
       allowedValues = $el.data("slider-values");
       if (allowedValues) {
@@ -397,19 +425,15 @@ var __slice = [].slice,
           return _results;
         })();
       }
-      if ($el.data("slider-range")) {
+      if ($el.data("slider-range"))
         settings.range = $el.data("slider-range").split(",");
-      }
-      if ($el.data("slider-step")) {
+      if ($el.data("slider-step"))
         settings.step = $el.data("slider-step");
-      }
       settings.snap = $el.data("slider-snap");
       settings.equalSteps = $el.data("slider-equal-steps");
-      if ($el.data("slider-theme")) {
+      if ($el.data("slider-theme"))
         settings.theme = $el.data("slider-theme");
-      }
+      if ($el.data("slider-vertical"))
+        settings.vertical = $el.data("slider-vertical");
       return $el.simpleSlider(settings);
-    });
-
-  });
-})(this.jQuery || this.Zepto, this);
+}
