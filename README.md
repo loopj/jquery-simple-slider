@@ -25,3 +25,7 @@ Documentation, Features and Demos
 Full details and documentation can be found on the project page here:
 
 <http://loopj.com/jquery-simple-slider/>
+
+Touch Support
+---------------------------------
+The script will automatically add touch support for mobile browsers. Please note that since this webkit, IE Mobile is not supported. Windows Phone 8 doesn't register tocuh events and the command used to detect touch in browsers will not work.

@@ -3,6 +3,10 @@
 
  Copyright (c) 2012 James Smith (http://loopj.com)
 
+ Forked by Greg Avola (http://gregavola.me) to add touch.
+
+ Forked by Nicolas Waissbluth (http://twitter.com/waissbluth) to add vertical mode
+
  Licensed under the MIT license (http://mit-license.org/)
 */
 
@@ -18,25 +22,37 @@ var __slice = [].slice,
         _this = this;
       this.input = input;
       this.defaultOptions = {
-        animate: true,
+        animate: false,
         snapMid: false,
         classPrefix: null,
         classSuffix: null,
-        theme: null
+        theme: null,
+        vertical: false
       };
       this.settings = $.extend({}, this.defaultOptions, options);
+
       if (this.settings.theme) {
         this.settings.classSuffix = "-" + this.settings.theme;
       }
       this.input.hide();
+
       this.slider = $("<div>").addClass("slider" + (this.settings.classSuffix || "")).css({
         position: "relative",
         userSelect: "none",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        cursor: "pointer"
       }).insertBefore(this.input);
+      
+      //Rotate if set to true
+      if(this.settings.vertical){
+        this.slider.addClass("vertical")
+        this.slider.css('height', this.slider.css('width'))
+      }
+
       if (this.input.attr("id")) {
         this.slider.attr("id", this.input.attr("id") + "-slider");
       }
+
       this.track = $("<div>").addClass("track").css({
         position: "absolute",
         top: "50%",
@@ -44,6 +60,7 @@ var __slice = [].slice,
         userSelect: "none",
         cursor: "pointer"
       }).appendTo(this.slider);
+
       this.dragger = $("<div>").addClass("dragger").css({
         position: "absolute",
         top: "50%",
@@ -62,39 +79,114 @@ var __slice = [].slice,
         marginTop: this.dragger.outerWidth() / -2,
         marginLeft: this.dragger.outerWidth() / -2
       });
-      this.track.mousedown(function(e) {
-        if (e.which !== 1) {
-          return;
-        }
-        _this.domDrag(e.pageX, e.pageY, true);
-        _this.dragging = true;
-        return false;
-      });
-      this.dragger.mousedown(function(e) {
-        if (e.which !== 1) {
-          return;
-        }
-        _this.dragging = true;
-        _this.dragger.addClass("dragging");
-        _this.domDrag(e.pageX, e.pageY);
-        return false;
-      });
-      $(window).mousemove(function(e) {
-        if (_this.dragging) {
+
+      if('ontouchstart' in window) {  
+          this.track.on("touchstart", function(e) {
+            if (jQuery) {
+              if (e.originalEvent.touches[0]) {    
+                _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+                _this.dragging = true;
+              }
+            }
+            else {
+              if (e.touches[0]) {    
+                _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+                _this.dragging = true;
+              }
+            }
+            
+            return false;
+        });
+        
+        this.dragger.on("touchstart", function(e) {
+
+          if (jQuery) {
+            if (e.originalEvent.touches[0]) {
+              _this.dragging = true;
+              _this.dragger.addClass("dragging");
+              _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+            }
+            return false;
+          }
+          else {
+            //console.log(jQuery);
+            if (e.touches[0]) {
+              _this.dragging = true;
+              _this.dragger.addClass("dragging");
+              _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+            }
+            return false;
+          }
+        });
+
+        $(window).on("touchmove", function(e) {
+            if (jQuery) {
+              if (_this.dragging) {
+                  _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+                  return $("body").css({
+                    cursor: "pointer"
+                });
+              }
+            }
+            else {
+                if (_this.dragging) {
+                  _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+                  return $("body").css({
+                    cursor: "pointer"
+                  });
+                }
+            }
+        }); 
+
+        $(window).on("touchend", function(e) {
+          if (_this.dragging) {
+            _this.dragging = false;
+            _this.dragger.removeClass("dragging");
+            return $("body").css({
+              cursor: "auto"
+            });
+          }
+        }); 
+      }
+      else {
+    //Changed from .track to .slider to get larger touch area
+        this.slider.mousedown(function(e) {
+          if (e.which !== 1) {
+            return;
+          }
+          _this.domDrag(e.pageX, e.pageY, true);
+          _this.dragging = true;
+          return false;
+        });
+
+        this.dragger.mousedown(function(e) {
+          if (e.which !== 1) {
+            return;
+          }
+          _this.dragging = true;
+          _this.dragger.addClass("dragging");
           _this.domDrag(e.pageX, e.pageY);
-          return $("body").css({
-            cursor: "pointer"
-          });
-        }
-      }).mouseup(function(e) {
-        if (_this.dragging) {
-          _this.dragging = false;
-          _this.dragger.removeClass("dragging");
-          return $("body").css({
-            cursor: "auto"
-          });
-        }
-      });
+          return false;
+        });
+
+        $(window).mousemove(function(e) {
+          if (_this.dragging) {
+            _this.domDrag(e.pageX, e.pageY);
+            return $("body").css({
+              cursor: "pointer"
+            });
+          }
+        }).mouseup(function(e) {
+          if (_this.dragging) {
+            _this.dragging = false;
+            _this.dragger.removeClass("dragging");
+            return $("body").css({
+              cursor: "auto"
+            });
+          }
+        });
+      }
+
       this.pagePos = 0;
       if (this.input.val() === "") {
         this.value = this.getRange().min;
@@ -134,9 +226,17 @@ var __slice = [].slice,
       if (animate == null) {
         animate = false;
       }
-      pagePos = pageX - this.slider.offset().left;
-      pagePos = Math.min(this.slider.outerWidth(), pagePos);
-      pagePos = Math.max(0, pagePos);
+      if(this.settings.vertical){
+        pagePos = pageY - this.slider.offset().top;
+        pagePos = Math.min(this.slider.outerWidth(), pagePos);
+        pagePos = Math.max(0, pagePos);       
+      }
+      else{
+        pagePos = pageX - this.slider.offset().left;
+        pagePos = Math.min(this.slider.outerWidth(), pagePos);
+        pagePos = Math.max(0, pagePos);
+      }
+      
       if (this.pagePos !== pagePos) {
         this.pagePos = pagePos;
         ratio = pagePos / this.slider.outerWidth();
@@ -151,13 +251,19 @@ var __slice = [].slice,
     };
 
     SimpleSlider.prototype.setSliderPosition = function(position, animate) {
+
       if (animate == null) {
         animate = false;
       }
       if (animate && this.settings.animate) {
+        //console.log(animating);  
+
         return this.dragger.animate({
           left: position
         }, 200);
+
+        //this.dragger.style.webkitTransform = "translate("+position+"px,0)";
+
       } else {
         return this.dragger.css({
           left: position
@@ -290,10 +396,21 @@ var __slice = [].slice,
       });
     }
   });
+
   return $(function() {
+
     return $("[data-slider]").each(function() {
-      var $el, allowedValues, settings, x;
-      $el = $(this);
+      
+    return generateSlider(this)
+    });
+
+  });
+})(this.jQuery || this.Zepto, this);
+
+//Receives the input element to convert to slider
+function generateSlider(element){
+    var $el, allowedValues, settings, x;
+      $el = $(element);
       settings = {};
       allowedValues = $el.data("slider-values");
       if (allowedValues) {
@@ -308,18 +425,15 @@ var __slice = [].slice,
           return _results;
         })();
       }
-      if ($el.data("slider-range")) {
+      if ($el.data("slider-range"))
         settings.range = $el.data("slider-range").split(",");
-      }
-      if ($el.data("slider-step")) {
+      if ($el.data("slider-step"))
         settings.step = $el.data("slider-step");
-      }
       settings.snap = $el.data("slider-snap");
       settings.equalSteps = $el.data("slider-equal-steps");
-      if ($el.data("slider-theme")) {
+      if ($el.data("slider-theme"))
         settings.theme = $el.data("slider-theme");
-      }
+      if ($el.data("slider-vertical"))
+        settings.vertical = $el.data("slider-vertical");
       return $el.simpleSlider(settings);
-    });
-  });
-})(this.jQuery || this.Zepto, this);
+}
