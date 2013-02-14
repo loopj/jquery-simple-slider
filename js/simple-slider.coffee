@@ -96,7 +96,7 @@
 
           false
 
-      $(window)
+      $("body")
         .mousemove (e) =>
           if @dragging
             # Update the slider position
