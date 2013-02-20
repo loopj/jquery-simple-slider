@@ -79,7 +79,7 @@ var __slice = [].slice,
         _this.domDrag(e.pageX, e.pageY);
         return false;
       });
-      $(window).mousemove(function(e) {
+      $("body").mousemove(function(e) {
         if (_this.dragging) {
           _this.domDrag(e.pageX, e.pageY);
           return $("body").css({
