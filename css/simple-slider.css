@@ -42,3 +42,29 @@
   border: 1px solid #aaa;
   height: 4px;
 }
+
+.slider .tooltip {
+  background-color: #72A307;
+  border-radius: 3px;
+  color: #fff;
+  left: 100%;
+  margin-left: 15px;
+  padding: 1px 4px;
+  position: absolute;
+}
+
+.slider > .tooltip::before {
+  background-color: #72A307;
+  content: '';
+  display: block;
+  height: 7px;
+  left: -3px;
+  position: absolute;
+  top: 5px;
+  width: 7px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}

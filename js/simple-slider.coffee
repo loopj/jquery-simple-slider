@@ -38,6 +38,10 @@
           userSelect: "none"
           boxSizing: "border-box"
         .insertBefore @input
+      if @settings.tooltip
+        @tooltip = $("<div/>").addClass("tooltip")
+        @slider.append( @.tooltip)
+        @displayValue(Number(@input.val()))
       @slider.attr("id", @input.attr("id") + "-slider") if @input.attr("id")
 
       # Create the track
@@ -65,7 +69,7 @@
       @slider.css
         minHeight: @dragger.outerHeight()
         marginLeft: @dragger.outerWidth()/2
-        marginRight: @dragger.outerWidth()/2
+        marginRight: @dragger.outerWidth()/2 + (56 if @settings.tooltip)
 
       @track.css
         marginTop: @track.outerHeight()/-2
@@ -340,6 +344,7 @@
       settings.allowedValues = (parseFloat(x) for x in allowedValues.split(",")) if allowedValues
       settings.range = $el.data("slider-range").split(",") if $el.data("slider-range")
       settings.step = $el.data("slider-step") if $el.data("slider-step")
+      settings.tooltip = $el.data("slider-tooltip") if $el.data("slider-tooltip")
       settings.snap = $el.data("slider-snap")
       settings.equalSteps = $el.data("slider-equal-steps")
       settings.theme = $el.data("slider-theme") if $el.data("slider-theme")
