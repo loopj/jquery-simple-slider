@@ -117,7 +117,7 @@
 
       # Set slider initial position
       @pagePos = 0
-      
+
       # Fill in initial slider value
       if @input.val() == ""
         @value = @getRange().min
@@ -129,7 +129,7 @@
 
       # We are ready to go
       ratio = @valueToRatio(@value)
-      @input.trigger "slider:ready", 
+      @input.trigger "slider:ready",
         value: @value
         ratio: ratio
         position: ratio * @slider.outerWidth()
@@ -189,7 +189,7 @@
           @setSliderPositionFromValue(value, animate)
         else
           @setSliderPosition(pagePos, animate)
-          
+
     # Set the slider position given a slider canvas position
     setSliderPosition: (position, animate=false) ->
       if animate and @settings.animate
@@ -201,7 +201,7 @@
     setSliderPositionFromValue: (value, animate=false) ->
       # Get the slide ratio from the value
       ratio = @valueToRatio(value)
-      
+
       # Set the slider position
       @setSliderPosition(ratio * @slider.outerWidth(), animate)
 
@@ -231,7 +231,7 @@
         $.each @settings.allowedValues, ->
           if closest == null || Math.abs(this - rawValue) < Math.abs(closest - rawValue)
             closest = this
-        
+
         return closest
       else if @settings.step
         maxSteps = (range.max - range.min) / @settings.step
@@ -244,7 +244,7 @@
 
     # Convert a value to a ratio
     valueToRatio: (value) ->
-      if @settings.equalSteps        
+      if @settings.equalSteps
         # Get slider ratio for equal-step
         for allowedVal, idx in @settings.allowedValues
           if !closest? || Math.abs(allowedVal - value) < Math.abs(closest - value)
@@ -255,7 +255,7 @@
           (closestIdx+0.5)/@settings.allowedValues.length
         else
           (closestIdx)/(@settings.allowedValues.length - 1)
-        
+
       else
         # Get slider ratio for continuous values
         range = @getRange()
@@ -283,7 +283,7 @@
       @value = value
 
       # Construct event data and fire event
-      eventData = 
+      eventData =
         value: value
         ratio: ratio
         position: ratio * @slider.outerWidth()
@@ -306,7 +306,7 @@
     $(this).each ->
       if settingsOrMethod and settingsOrMethod in publicMethods
         obj = $(this).data("slider-object")
-        
+
         obj[settingsOrMethod].apply(obj, params)
       else
         settings = settingsOrMethod
