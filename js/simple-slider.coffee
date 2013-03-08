@@ -121,7 +121,7 @@
       # Fill in initial slider value
       if @input.val() == ""
         @value = @getRange().min
-        @input.val(@value)
+        @displayValue(@value)
       else
         @value = @nearestValidValue(@input.val())
 
@@ -134,6 +134,17 @@
         ratio: ratio
         position: ratio * @slider.outerWidth()
         el: @slider
+
+    # Displays the value appropriately for the step value, if any, given.
+    displayValue: (value) ->
+      # If there is no step value, then we leave the value untouched.
+      # This will allow a default slider from 0->1 to work as it did previously.
+      if @settings.step && !isNaN(@settings.step)
+        precision = Math.max(0, Math.ceil(Math.log(1/@settings.step)/Math.log(10)));
+        value = value.toFixed(precision)
+      if (this.tooltip)
+        @tooltip.text(value)
+      @input.val(value)
 
     # Set the ratio (value between 0 and 1) of the slider.
     # Exposed via el.slider("setRatio", ratio)
@@ -290,8 +301,9 @@
         trigger: trigger
         el: @slider
 
+      @displayValue(value);
+
       @input
-        .val(value)
         .trigger($.Event("change", eventData))
         .trigger("slider:changed", eventData)
 
