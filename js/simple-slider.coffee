@@ -8,6 +8,12 @@
 
 (($, window) ->
 
+  # Adds a class 'touch' to the HTML tag if this is a touch-capable device,
+  # this allows our CSS to respond accordingly and, in this case, make the
+  # size of the dragger 2X the size.
+  if 'ontouchstart' in window
+    $('html').addClass 'touch'
+
   #
   # Main slider class
   #
@@ -78,46 +84,86 @@
         marginTop: @dragger.outerWidth()/-2
         marginLeft: @dragger.outerWidth()/-2
 
-      # Hook up drag/drop mouse events
-      @track
-        .mousedown (e) =>
-          return unless e.which == 1
 
+      # Hook up drag/drop mouse events AND touch events.  Note, we use 'on'
+      # rather than 'bind', so this requires a more recent version of
+      # jQuery/Zepto.
+
+      @track.on 'touchstart mousedown', (e) =>
+
+        # If this mouse down isn’t the left mouse button, ignore it.  Also, If
+        # this is a mousedown event, we must preventDefault to prevent
+        # interacting accidentally with page content. We MUST allow the
+        # default action, however for touch-based input, otherwise, it will
+        # interfere with other gestures (page-scroll, pinch-to-zoom, etc.)
+
+        if e.type == "mousedown"
+          unless e.which is 1
+            return
+          e.preventDefault()
+
+        if e.originalEvent && e.originalEvent.touches # jQuery users
+          @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+        else if e.touches # For Zepto users
+          @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+        else
           @domDrag(e.pageX, e.pageY, true)
-          @dragging = true
-          false
 
-      @dragger
-        .mousedown (e) =>
-          return unless e.which == 1
+        @dragging = true
 
-          # We've started moving
-          @dragging = true
-          @dragger.addClass "dragging"
 
+      @dragger.on 'touchstart mousedown', (e) =>
+
+        # See note above re: preventDefault() and left mouse button
+        if e.type is "mousedown"
+          unless e.which is 1
+            return
+          e.preventDefault()
+
+        # We've started moving
+        @dragging = true
+        @dragger.addClass "dragging"
+
+        # Update the slider position
+        if e.originalEvent && e.originalEvent.touches # jQuery users
+          @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+        else if e.touches # For Zepto users
+          @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+        else
+          @domDrag(e.pageX, e.pageY, true)
+
+        false
+
+
+      $("body").on 'touchmove mousemove', (e) =>
+
+        # See note above re: preventDefault()
+        if e.type is "mousemove"
+          e.preventDefault();
+
+        if @dragging
           # Update the slider position
-          @domDrag(e.pageX, e.pageY)
-
-          false
-
-      $("body")
-        .mousemove (e) =>
-          if @dragging
-            # Update the slider position
+          if e.originalEvent && e.originalEvent.touches # jQuery users
+            @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+          else if e.touches # For Zepto users
+            @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+          else
             @domDrag(e.pageX, e.pageY)
 
-            # Always show a pointer when dragging
-            $("body").css cursor: "pointer"
+          # Always show a pointer when dragging
+          $("body").css cursor: "pointer"
 
 
-        .mouseup (e) =>
-          if @dragging
-            # Finished dragging
-            @dragging = false
-            @dragger.removeClass "dragging"
+      $("body").on 'touchend mouseup', () =>
 
-            # Revert the cursor
-            $("body").css cursor: "auto"
+        if @dragging
+          # Finished dragging
+          @dragging = false
+          @dragger.removeClass "dragging"
+
+          # Revert the cursor
+          $("body").css cursor: "auto"
+
 
       # Set slider initial position
       @pagePos = 0

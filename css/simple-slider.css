@@ -68,3 +68,19 @@
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+/**
+ * These are styles for when we're on a touch-capable device where we'd prefer
+ * a larger dragger
+ */
+html.touch .slider > .dragger {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 20px;
+  height: 32px;
+  width: 32px;
+}
+
+html.touch .slider > .tooltip {
+  top: 8px;
+}
