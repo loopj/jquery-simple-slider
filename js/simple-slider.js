@@ -10,11 +10,14 @@
 
 
 (function() {
-  var __slice = [].slice,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __slice = [].slice;
 
   (function($, window) {
     var SimpleSlider;
+    if (__indexOf.call(window, 'ontouchstart') >= 0) {
+      $('html').addClass('touch');
+    }
     SimpleSlider = (function() {
 
       function SimpleSlider(input, options) {
@@ -71,31 +74,58 @@
           marginTop: this.dragger.outerWidth() / -2,
           marginLeft: this.dragger.outerWidth() / -2
         });
-        this.track.mousedown(function(e) {
-          if (e.which !== 1) {
-            return;
+        this.track.on('touchstart mousedown', function(e) {
+          if (e.type === "mousedown") {
+            if (e.which !== 1) {
+              return;
+            }
+            e.preventDefault();
           }
-          _this.domDrag(e.pageX, e.pageY, true);
-          _this.dragging = true;
-          return false;
+          if (e.originalEvent && e.originalEvent.touches) {
+            _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+          } else if (e.touches) {
+            _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+          } else {
+            _this.domDrag(e.pageX, e.pageY, true);
+          }
+          return _this.dragging = true;
         });
-        this.dragger.mousedown(function(e) {
-          if (e.which !== 1) {
-            return;
+        this.dragger.on('touchstart mousedown', function(e) {
+          if (e.type === "mousedown") {
+            if (e.which !== 1) {
+              return;
+            }
+            e.preventDefault();
           }
           _this.dragging = true;
           _this.dragger.addClass("dragging");
-          _this.domDrag(e.pageX, e.pageY);
+          if (e.originalEvent && e.originalEvent.touches) {
+            _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+          } else if (e.touches) {
+            _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+          } else {
+            _this.domDrag(e.pageX, e.pageY, true);
+          }
           return false;
         });
-        $("body").mousemove(function(e) {
+        $("body").on('touchmove mousemove', function(e) {
+          if (e.type === "mousemove") {
+            e.preventDefault();
+          }
           if (_this.dragging) {
-            _this.domDrag(e.pageX, e.pageY);
+            if (e.originalEvent && e.originalEvent.touches) {
+              _this.domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY);
+            } else if (e.touches) {
+              _this.domDrag(e.touches[0].pageX, e.touches[0].pageY);
+            } else {
+              _this.domDrag(e.pageX, e.pageY);
+            }
             return $("body").css({
               cursor: "pointer"
             });
           }
-        }).mouseup(function(e) {
+        });
+        $("body").on('touchend mouseup', function() {
           if (_this.dragging) {
             _this.dragging = false;
             _this.dragger.removeClass("dragging");
