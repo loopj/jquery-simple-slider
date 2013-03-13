@@ -8,6 +8,12 @@
 
 (($, window) ->
 
+  # Adds a class 'touch' to the HTML tag if this is a touch-capable device,
+  # this allows our CSS to respond accordingly and, in this case, make the
+  # size of the dragger 2X the size.
+  if 'ontouchstart' in window
+    $('html').addClass 'touch'
+
   #
   # Main slider class
   #
@@ -38,6 +44,10 @@
           userSelect: "none"
           boxSizing: "border-box"
         .insertBefore @input
+      if @settings.tooltip
+        @tooltip = $("<div/>").addClass("tooltip")
+        @slider.append( @.tooltip)
+        @displayValue(Number(@input.val()))
       @slider.attr("id", @input.attr("id") + "-slider") if @input.attr("id")
 
       # Create the track
@@ -65,7 +75,7 @@
       @slider.css
         minHeight: @dragger.outerHeight()
         marginLeft: @dragger.outerWidth()/2
-        marginRight: @dragger.outerWidth()/2
+        marginRight: @dragger.outerWidth()/2 + (56 if @settings.tooltip)
 
       @track.css
         marginTop: @track.outerHeight()/-2
@@ -74,54 +84,94 @@
         marginTop: @dragger.outerWidth()/-2
         marginLeft: @dragger.outerWidth()/-2
 
-      # Hook up drag/drop mouse events
-      @track
-        .mousedown (e) =>
-          return unless e.which == 1
 
+      # Hook up drag/drop mouse events AND touch events.  Note, we use 'on'
+      # rather than 'bind', so this requires a more recent version of
+      # jQuery/Zepto.
+
+      @track.on 'touchstart mousedown', (e) =>
+
+        # If this mouse down isn’t the left mouse button, ignore it.  Also, If
+        # this is a mousedown event, we must preventDefault to prevent
+        # interacting accidentally with page content. We MUST allow the
+        # default action, however for touch-based input, otherwise, it will
+        # interfere with other gestures (page-scroll, pinch-to-zoom, etc.)
+
+        if e.type == "mousedown"
+          unless e.which is 1
+            return
+          e.preventDefault()
+
+        if e.originalEvent && e.originalEvent.touches # jQuery users
+          @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+        else if e.touches # For Zepto users
+          @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+        else
           @domDrag(e.pageX, e.pageY, true)
-          @dragging = true
-          false
 
-      @dragger
-        .mousedown (e) =>
-          return unless e.which == 1
+        @dragging = true
 
-          # We've started moving
-          @dragging = true
-          @dragger.addClass "dragging"
 
+      @dragger.on 'touchstart mousedown', (e) =>
+
+        # See note above re: preventDefault() and left mouse button
+        if e.type is "mousedown"
+          unless e.which is 1
+            return
+          e.preventDefault()
+
+        # We've started moving
+        @dragging = true
+        @dragger.addClass "dragging"
+
+        # Update the slider position
+        if e.originalEvent && e.originalEvent.touches # jQuery users
+          @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+        else if e.touches # For Zepto users
+          @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+        else
+          @domDrag(e.pageX, e.pageY, true)
+
+        false
+
+
+      $("body").on 'touchmove mousemove', (e) =>
+
+        # See note above re: preventDefault()
+        if e.type is "mousemove"
+          e.preventDefault();
+
+        if @dragging
           # Update the slider position
-          @domDrag(e.pageX, e.pageY)
-
-          false
-
-      $("body")
-        .mousemove (e) =>
-          if @dragging
-            # Update the slider position
+          if e.originalEvent && e.originalEvent.touches # jQuery users
+            @domDrag(e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY)
+          else if e.touches # For Zepto users
+            @domDrag(e.touches[0].pageX, e.touches[0].pageY)
+          else
             @domDrag(e.pageX, e.pageY)
 
-            # Always show a pointer when dragging
-            $("body").css cursor: "pointer"
+          # Always show a pointer when dragging
+          $("body").css cursor: "pointer"
 
 
-        .mouseup (e) =>
-          if @dragging
-            # Finished dragging
-            @dragging = false
-            @dragger.removeClass "dragging"
+      $("body").on 'touchend mouseup', () =>
 
-            # Revert the cursor
-            $("body").css cursor: "auto"
+        if @dragging
+          # Finished dragging
+          @dragging = false
+          @dragger.removeClass "dragging"
+
+          # Revert the cursor
+          $("body").css cursor: "auto"
+
 
       # Set slider initial position
       @pagePos = 0
-      
+
       # Fill in initial slider value
       if @input.val() == ""
         @value = @getRange().min
-        @input.val(@value)
+        @displayValue(@value)
       else
         @value = @nearestValidValue(@input.val())
 
@@ -129,11 +179,22 @@
 
       # We are ready to go
       ratio = @valueToRatio(@value)
-      @input.trigger "slider:ready", 
+      @input.trigger "slider:ready",
         value: @value
         ratio: ratio
         position: ratio * @slider.outerWidth()
         el: @slider
+
+    # Displays the value appropriately for the step value, if any, given.
+    displayValue: (value) ->
+      # If there is no step value, then we leave the value untouched.
+      # This will allow a default slider from 0->1 to work as it did previously.
+      if @settings.step && !isNaN(@settings.step)
+        precision = Math.max(0, Math.ceil(Math.log(1/@settings.step)/Math.log(10)));
+        value = value.toFixed(precision)
+      if (this.tooltip)
+        @tooltip.text(value)
+      @input.val(value)
 
     # Set the ratio (value between 0 and 1) of the slider.
     # Exposed via el.slider("setRatio", ratio)
@@ -189,7 +250,7 @@
           @setSliderPositionFromValue(value, animate)
         else
           @setSliderPosition(pagePos, animate)
-          
+
     # Set the slider position given a slider canvas position
     setSliderPosition: (position, animate=false) ->
       if animate and @settings.animate
@@ -201,7 +262,7 @@
     setSliderPositionFromValue: (value, animate=false) ->
       # Get the slide ratio from the value
       ratio = @valueToRatio(value)
-      
+
       # Set the slider position
       @setSliderPosition(ratio * @slider.outerWidth(), animate)
 
@@ -231,7 +292,7 @@
         $.each @settings.allowedValues, ->
           if closest == null || Math.abs(this - rawValue) < Math.abs(closest - rawValue)
             closest = this
-        
+
         return closest
       else if @settings.step
         maxSteps = (range.max - range.min) / @settings.step
@@ -244,7 +305,7 @@
 
     # Convert a value to a ratio
     valueToRatio: (value) ->
-      if @settings.equalSteps        
+      if @settings.equalSteps
         # Get slider ratio for equal-step
         for allowedVal, idx in @settings.allowedValues
           if !closest? || Math.abs(allowedVal - value) < Math.abs(closest - value)
@@ -255,7 +316,7 @@
           (closestIdx+0.5)/@settings.allowedValues.length
         else
           (closestIdx)/(@settings.allowedValues.length - 1)
-        
+
       else
         # Get slider ratio for continuous values
         range = @getRange()
@@ -283,15 +344,16 @@
       @value = value
 
       # Construct event data and fire event
-      eventData = 
+      eventData =
         value: value
         ratio: ratio
         position: ratio * @slider.outerWidth()
         trigger: trigger
         el: @slider
 
+      @displayValue(value);
+
       @input
-        .val(value)
         .trigger($.Event("change", eventData))
         .trigger("slider:changed", eventData)
 
@@ -306,7 +368,7 @@
     $(this).each ->
       if settingsOrMethod and settingsOrMethod in publicMethods
         obj = $(this).data("slider-object")
-        
+
         obj[settingsOrMethod].apply(obj, params)
       else
         settings = settingsOrMethod
@@ -328,6 +390,7 @@
       settings.allowedValues = (parseFloat(x) for x in allowedValues.split(",")) if allowedValues
       settings.range = $el.data("slider-range").split(",") if $el.data("slider-range")
       settings.step = $el.data("slider-step") if $el.data("slider-step")
+      settings.tooltip = $el.data("slider-tooltip") if $el.data("slider-tooltip")
       settings.snap = $el.data("slider-snap")
       settings.equalSteps = $el.data("slider-equal-steps")
       settings.theme = $el.data("slider-theme") if $el.data("slider-theme")
