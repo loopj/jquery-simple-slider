@@ -28,7 +28,7 @@ var __slice = [].slice,
       if (this.settings.theme) {
         this.settings.classSuffix = "-" + this.settings.theme;
       }
-      this.input.hide();
+      this.input.css('visibility', 'hidden');
       this.slider = $("<div>").addClass("slider" + (this.settings.classSuffix || "")).css({
         position: "relative",
         userSelect: "none",
