@@ -353,6 +353,7 @@
       settings.equalSteps = $el.data("slider-equal-steps")
       settings.theme = $el.data("slider-theme") if $el.data("slider-theme")
       settings.highlight = $el.data("slider-highlight") if $el.attr("data-slider-highlight")
+      settings.animate = $el.data("slider-animate")
 
       # Activate the plugin
       $el.simpleSlider settings

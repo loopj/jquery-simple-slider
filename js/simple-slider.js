@@ -354,6 +354,7 @@ var __slice = [].slice,
       if ($el.attr("data-slider-highlight")) {
         settings.highlight = $el.data("slider-highlight");
       }
+      settings.animate = $el.data("slider-animate");
       return $el.simpleSlider(settings);
     });
   });
