@@ -351,7 +351,7 @@ var __slice = [].slice,
       if ($el.data("slider-theme")) {
         settings.theme = $el.data("slider-theme");
       }
-      if ($el.data("slider-highlight")) {
+      if ($el.attr("data-slider-highlight")) {
         settings.highlight = $el.data("slider-highlight");
       }
       return $el.simpleSlider(settings);
