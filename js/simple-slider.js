@@ -354,7 +354,7 @@ var __slice = [].slice,
       if ($el.attr("data-slider-highlight")) {
         settings.highlight = $el.data("slider-highlight");
       }
-      if ($el.attr("data-slider-animate")) {
+      if ($el.data("slider-animate") != null) {
         settings.animate = $el.data("slider-animate");
       }
       return $el.simpleSlider(settings);
