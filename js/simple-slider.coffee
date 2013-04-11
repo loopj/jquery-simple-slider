@@ -23,6 +23,7 @@
         classPrefix: null
         classSuffix: null
         theme: null
+        highlight: false
 
       @settings = $.extend({}, @defaultOptions, options)
       @settings.classSuffix = "-#{@settings.theme}" if @settings.theme
@@ -39,27 +40,19 @@
           boxSizing: "border-box"
         .insertBefore @input
       @slider.attr("id", @input.attr("id") + "-slider") if @input.attr("id")
-
-      # Create the track
-      @track = $("<div>")
-        .addClass("track")
+      
+      @track = @createDivElement("track")
         .css
-          position: "absolute"
-          top: "50%"
           width: "100%"
-          userSelect: "none"
-          cursor: "pointer"
-        .appendTo @slider
-
+      
+      if @settings.highlight
+        # Create the highlighting track on top of the track
+        @highlightTrack = @createDivElement("highlight-track")
+          .css
+            width: "0"
+      
       # Create the slider drag target
-      @dragger = $("<div>")
-        .addClass("dragger")
-        .css
-          position: "absolute"
-          top: "50%"
-          userSelect: "none"
-          cursor: "pointer"
-        .appendTo @slider
+      @dragger = @createDivElement("dragger")
 
       # Adjust dimensions now elements are in the DOM
       @slider.css
@@ -69,6 +62,10 @@
 
       @track.css
         marginTop: @track.outerHeight()/-2
+  
+      if @settings.highlight
+        @highlightTrack.css
+          marginTop: @track.outerHeight()/-2
 
       @dragger.css
         marginTop: @dragger.outerWidth()/-2
@@ -77,11 +74,12 @@
       # Hook up drag/drop mouse events
       @track
         .mousedown (e) =>
-          return unless e.which == 1
+          @trackEvent(e)
 
-          @domDrag(e.pageX, e.pageY, true)
-          @dragging = true
-          false
+      if @settings.highlight
+        @highlightTrack
+          .mousedown (e) =>
+            @trackEvent(e)
 
       @dragger
         .mousedown (e) =>
@@ -135,6 +133,19 @@
         position: ratio * @slider.outerWidth()
         el: @slider
 
+    # Create the basis of the track-div(s)
+    createDivElement: (classname) ->
+      item = $("<div>")
+        .addClass(classname)
+        .css
+          position: "absolute"
+          top: "50%"
+          userSelect: "none"
+          cursor: "pointer"
+        .appendTo @slider
+      return item
+    
+
     # Set the ratio (value between 0 and 1) of the slider.
     # Exposed via el.slider("setRatio", ratio)
     setRatio: (ratio) ->
@@ -166,6 +177,14 @@
       # Trigger value changed events
       @valueChanged(value, ratio, "setValue")
 
+    # Respond to an event on a track
+    trackEvent: (e) -> 
+      return unless e.which == 1
+
+      @domDrag(e.pageX, e.pageY, true)
+      @dragging = true
+      false
+
     # Respond to a dom drag event
     domDrag: (pageX, pageY, animate=false) ->
       # Normalize position within allowed range
@@ -194,8 +213,10 @@
     setSliderPosition: (position, animate=false) ->
       if animate and @settings.animate
         @dragger.animate left: position, 200
+        @highlightTrack.animate width: position, 200 if @settings.highlight
       else
         @dragger.css left: position
+        @highlightTrack.css width: position if @settings.highlight
 
     # Set the slider position given a value
     setSliderPositionFromValue: (value, animate=false) ->
@@ -331,6 +352,7 @@
       settings.snap = $el.data("slider-snap")
       settings.equalSteps = $el.data("slider-equal-steps")
       settings.theme = $el.data("slider-theme") if $el.data("slider-theme")
+      settings.highlight = $el.data("slider-highlight") if $el.attr("data-slider-highlight")
 
       # Activate the plugin
       $el.simpleSlider settings
