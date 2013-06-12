@@ -72,13 +72,21 @@ var __slice = [].slice,
           return _this.trackEvent(e);
         });
       }
-      this.dragger.mousedown(function(e) {
+      this.dragger.mousedown(function (e) {
         if (e.which !== 1) {
           return;
         }
         _this.dragging = true;
         _this.dragger.addClass("dragging");
         _this.domDrag(e.pageX, e.pageY);
+
+        _this.input.trigger("slider:hold", {
+          value: _this.value,
+          ratio: ratio,
+          position: ratio * _this.slider.outerWidth(),
+          el: this.slider
+        });
+
         return false;
       });
       $("body").mousemove(function(e) {
