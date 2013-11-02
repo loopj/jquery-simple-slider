@@ -2,6 +2,7 @@
  jQuery Simple Slider
 
  Copyright (c) 2012 James Smith (http://loopj.com)
+ Copyright (c) 2013 Erik J. Nedwidek (http://github.com/nedwidek)
 
  Licensed under the MIT license (http://mit-license.org/)
 */
@@ -23,7 +24,8 @@ var __slice = [].slice,
         classPrefix: null,
         classSuffix: null,
         theme: null,
-        highlight: false
+        highlight: false,
+        showScale: false
       };
       this.settings = $.extend({}, this.defaultOptions, options);
       if (this.settings.theme) {
@@ -106,6 +108,20 @@ var __slice = [].slice,
       }
       this.setSliderPositionFromValue(this.value);
       ratio = this.valueToRatio(this.value);
+      if (this.settings.showScale) {
+        this.scale = this.createDivElement("scale");
+        this.minScale = this.createSpanElement("min-scale", this.scale);
+        this.maxScale = this.createSpanElement("max-scale", this.scale);
+
+        range = this.getRange();
+
+        this.minScale.html(range.min);
+        this.maxScale.html(range.max);
+
+        this.scale.css('marginTop', function(index, currentValue) {
+            return (parseInt(currentValue, 10)  + this.previousSibling.offsetHeight / 2) + 'px';
+        });
+      }
       this.input.trigger("slider:ready", {
         value: this.value,
         ratio: ratio,
@@ -122,6 +138,12 @@ var __slice = [].slice,
         userSelect: "none",
         cursor: "pointer"
       }).appendTo(this.slider);
+      return item;
+    };
+
+    SimpleSlider.prototype.createSpanElement = function(classname, parent) {
+      var item;
+      item = $("<span>").addClass(classname).appendTo(parent);
       return item;
     };
 
@@ -356,6 +378,9 @@ var __slice = [].slice,
       }
       if ($el.data("slider-animate") != null) {
         settings.animate = $el.data("slider-animate");
+      }
+      if ($el.data("slider-showscale") != null) {
+        settings.showScale = $el.data("slider-showscale");
       }
       return $el.simpleSlider(settings);
     });
