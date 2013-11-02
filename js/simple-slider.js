@@ -27,6 +27,9 @@ var __slice = [].slice,
         highlight: false,
         showScale: false
       };
+      if(typeof options == 'undefined') {
+        options = this.loadDataOptions();
+      }
       this.settings = $.extend({}, this.defaultOptions, options);
       if (this.settings.theme) {
         this.settings.classSuffix = "-" + this.settings.theme;
@@ -128,6 +131,44 @@ var __slice = [].slice,
         position: ratio * this.slider.outerWidth(),
         el: this.slider
       });
+    }
+
+    SimpleSlider.prototype.loadDataOptions = function() {
+      var options = {};
+      allowedValues = this.input.data("slider-values");
+      if (allowedValues) {
+        options.allowedValues = (function() {
+          var _i, _len, _ref, _results;
+          _ref = allowedValues.split(",");
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            x = _ref[_i];
+            _results.push(parseFloat(x));
+          }
+          return _results;
+        })();
+      }
+      if (this.input.data("slider-range")) {
+        options.range = this.input.data("slider-range").split(",");
+      }
+      if (this.input.data("slider-step")) {
+        options.step = this.input.data("slider-step");
+      }
+      options.snap = this.input.data("slider-snap");
+      options.equalSteps = this.input.data("slider-equal-steps");
+      if (this.input.data("slider-theme")) {
+        options.theme = this.input.data("slider-theme");
+      }
+      if (this.input.attr("data-slider-highlight")) {
+        options.highlight = this.input.data("slider-highlight");
+      }
+      if (this.input.data("slider-animate") != null) {
+        options.animate = this.input.data("slider-animate");
+      }
+      if (this.input.data("slider-showscale") != null) {
+        options.showScale = this.input.data("slider-showscale");
+      }
+      return options;
     }
 
     SimpleSlider.prototype.createDivElement = function(classname) {
@@ -348,41 +389,7 @@ var __slice = [].slice,
     return $("[data-slider]").each(function() {
       var $el, allowedValues, settings, x;
       $el = $(this);
-      settings = {};
-      allowedValues = $el.data("slider-values");
-      if (allowedValues) {
-        settings.allowedValues = (function() {
-          var _i, _len, _ref, _results;
-          _ref = allowedValues.split(",");
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            x = _ref[_i];
-            _results.push(parseFloat(x));
-          }
-          return _results;
-        })();
-      }
-      if ($el.data("slider-range")) {
-        settings.range = $el.data("slider-range").split(",");
-      }
-      if ($el.data("slider-step")) {
-        settings.step = $el.data("slider-step");
-      }
-      settings.snap = $el.data("slider-snap");
-      settings.equalSteps = $el.data("slider-equal-steps");
-      if ($el.data("slider-theme")) {
-        settings.theme = $el.data("slider-theme");
-      }
-      if ($el.attr("data-slider-highlight")) {
-        settings.highlight = $el.data("slider-highlight");
-      }
-      if ($el.data("slider-animate") != null) {
-        settings.animate = $el.data("slider-animate");
-      }
-      if ($el.data("slider-showscale") != null) {
-        settings.showScale = $el.data("slider-showscale");
-      }
-      return $el.simpleSlider(settings);
+      return $el.simpleSlider();
     });
   });
 })(this.jQuery || this.Zepto, this);
