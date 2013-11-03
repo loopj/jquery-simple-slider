@@ -46,3 +46,21 @@
   background: -webkit-linear-gradient(top, #c5c5c5, #a2a2a2);
   background: linear-gradient(top, #c5c5c5, #a2a2a2);
 }
+
+.slider-volume > .scale {
+    width: 100%;
+    color: #888; 
+    font-size: small;
+}
+
+.slider-volume > .scale > .min-scale {
+    float: left;
+    font-weight: bold;
+    color: #622;
+}
+
+.slider-volume > .scale > .max-scale {
+    float: right;
+    font-weight: bold;
+    color: #262;
+}

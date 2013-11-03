@@ -53,3 +53,16 @@
 	border-color: #496805;
 }
 
+.slider > .scale {
+    width: 100%;
+    color: #888; 
+    font-size: small;
+}
+
+.slider > .scale > .min-scale {
+    float: left;
+}
+
+.slider > .scale > .max-scale {
+    float: right;
+}
