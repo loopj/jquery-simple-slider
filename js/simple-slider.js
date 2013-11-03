@@ -1,7 +1,10 @@
 /*
  jQuery Simple Slider
 
- Copyright (c) 2012 James Smith (http://loopj.com)
+ Copyright (c) 2012, 2013 James Smith (http://loopj.com)
+ Copyright (c) 2013 Maarten van Grootel (http://maatenvangrootel.nl)
+ Copyright (c) 2013 Nathan Hunzaker (http://natehunzaker.com)
+ Copyright (c) 2013 Erik J. Nedwidek (http://github.com/nedwidek)
 
  Licensed under the MIT license (http://mit-license.org/)
 */
@@ -23,8 +26,12 @@ var __slice = [].slice,
         classPrefix: null,
         classSuffix: null,
         theme: null,
-        highlight: false
+        highlight: false,
+        showScale: false
       };
+      if(typeof options == 'undefined') {
+        options = this.loadDataOptions();
+      }
       this.settings = $.extend({}, this.defaultOptions, options);
       if (this.settings.theme) {
         this.settings.classSuffix = "-" + this.settings.theme;
@@ -106,12 +113,64 @@ var __slice = [].slice,
       }
       this.setSliderPositionFromValue(this.value);
       ratio = this.valueToRatio(this.value);
+      if (this.settings.showScale) {
+        this.scale = this.createDivElement("scale");
+        this.minScale = this.createSpanElement("min-scale", this.scale);
+        this.maxScale = this.createSpanElement("max-scale", this.scale);
+
+        range = this.getRange();
+
+        this.minScale.html(range.min);
+        this.maxScale.html(range.max);
+
+        this.scale.css('marginTop', function(index, currentValue) {
+            return (parseInt(currentValue, 10)  + this.previousSibling.offsetHeight / 2) + 'px';
+        });
+      }
       this.input.trigger("slider:ready", {
         value: this.value,
         ratio: ratio,
         position: ratio * this.slider.outerWidth(),
         el: this.slider
       });
+    }
+
+    SimpleSlider.prototype.loadDataOptions = function() {
+      var options = {};
+      allowedValues = this.input.data("slider-values");
+      if (allowedValues) {
+        options.allowedValues = (function() {
+          var _i, _len, _ref, _results;
+          _ref = allowedValues.split(",");
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            x = _ref[_i];
+            _results.push(parseFloat(x));
+          }
+          return _results;
+        })();
+      }
+      if (this.input.data("slider-range")) {
+        options.range = this.input.data("slider-range").split(",");
+      }
+      if (this.input.data("slider-step")) {
+        options.step = this.input.data("slider-step");
+      }
+      options.snap = this.input.data("slider-snap");
+      options.equalSteps = this.input.data("slider-equal-steps");
+      if (this.input.data("slider-theme")) {
+        options.theme = this.input.data("slider-theme");
+      }
+      if (this.input.attr("data-slider-highlight")) {
+        options.highlight = this.input.data("slider-highlight");
+      }
+      if (this.input.data("slider-animate") != null) {
+        options.animate = this.input.data("slider-animate");
+      }
+      if (this.input.data("slider-showscale") != null) {
+        options.showScale = this.input.data("slider-showscale");
+      }
+      return options;
     }
 
     SimpleSlider.prototype.createDivElement = function(classname) {
@@ -122,6 +181,12 @@ var __slice = [].slice,
         userSelect: "none",
         cursor: "pointer"
       }).appendTo(this.slider);
+      return item;
+    };
+
+    SimpleSlider.prototype.createSpanElement = function(classname, parent) {
+      var item;
+      item = $("<span>").addClass(classname).appendTo(parent);
       return item;
     };
 
@@ -326,38 +391,7 @@ var __slice = [].slice,
     return $("[data-slider]").each(function() {
       var $el, allowedValues, settings, x;
       $el = $(this);
-      settings = {};
-      allowedValues = $el.data("slider-values");
-      if (allowedValues) {
-        settings.allowedValues = (function() {
-          var _i, _len, _ref, _results;
-          _ref = allowedValues.split(",");
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            x = _ref[_i];
-            _results.push(parseFloat(x));
-          }
-          return _results;
-        })();
-      }
-      if ($el.data("slider-range")) {
-        settings.range = $el.data("slider-range").split(",");
-      }
-      if ($el.data("slider-step")) {
-        settings.step = $el.data("slider-step");
-      }
-      settings.snap = $el.data("slider-snap");
-      settings.equalSteps = $el.data("slider-equal-steps");
-      if ($el.data("slider-theme")) {
-        settings.theme = $el.data("slider-theme");
-      }
-      if ($el.attr("data-slider-highlight")) {
-        settings.highlight = $el.data("slider-highlight");
-      }
-      if ($el.data("slider-animate") != null) {
-        settings.animate = $el.data("slider-animate");
-      }
-      return $el.simpleSlider(settings);
+      return $el.simpleSlider();
     });
   });
 })(this.jQuery || this.Zepto, this);
