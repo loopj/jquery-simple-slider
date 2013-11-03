@@ -1,7 +1,9 @@
 /*
  jQuery Simple Slider
 
- Copyright (c) 2012 James Smith (http://loopj.com)
+ Copyright (c) 2012, 2013 James Smith (http://loopj.com)
+ Copyright (c) 2013 Maarten van Grootel (http://maatenvangrootel.nl)
+ Copyright (c) 2013 Nathan Hunzaker (http://natehunzaker.com)
  Copyright (c) 2013 Erik J. Nedwidek (http://github.com/nedwidek)
 
  Licensed under the MIT license (http://mit-license.org/)

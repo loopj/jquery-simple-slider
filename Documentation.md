@@ -51,34 +51,42 @@ Configuration
 
 ### data-slider-range 
 > Javascript: range
+>
 > The range representing the start and end of the slider. Eg. data-slider-range="10,1000"
 
 ### data-slider-step
 > Javascript: step
+>
 > The interval to move when dragging the slider. Eg. data-slider-step="100"
 
 ### data-slider-snap
 > Javascript: snap
+>
 > Setting this to true makes the slider snap to each step when dragging, otherwise dragging will be continuous. Eg. data-slider-snap="true"
 
 ### data-slider-values
 > Javascript: allowedValues (array)
+>
 > A pre-defined list of values to allow sliding for. Eg. data-slider-values="0,100,500,800,2000"
 
 ### data-slider-equal-steps
 > Javascript: equalSteps
+>
 > Setting this to true makes the spacing between each always value equal when used with data-slider-values. Eg. data-slider-equal-steps="true"
 
 ### data-slider-theme
 > Javascript: theme
+>
 > The CSS theme to use when rendering this slider. Setting this value adds a suffix to the CSS class of the slider. Eg. data-slider-theme="volume"
 
 ### data-slider-highlight
 > Javascript: highlight
+>
 > Boolean for if we should highlight the background of the slider as it it dragged. Eg. data-slider-highlight="true"
 
 ### data-slider-showscale
 > Javascript: showScale
+>
 > Boolean for if we should display the minimum and maximum scale below the slider. Eg. data-slider-highlight="true"
 
 Events
@@ -124,7 +132,7 @@ Methods
 ### selector.simpleSlider("setValue", value);
 > Sets the value of the slider.
 
-selector.simpleSlider("setRatio", ratio);
+### selector.simpleSlider("setRatio", ratio);
 > Sets the ratio (see above) of the slider.
 
 License
