@@ -68,7 +68,7 @@
           marginTop: @track.outerHeight()/-2
 
       @dragger.css
-        marginTop: @dragger.outerWidth()/-2
+        marginTop: @dragger.outerHeight()/-2
         marginLeft: @dragger.outerWidth()/-2
 
       # Hook up drag/drop mouse events
