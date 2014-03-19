@@ -1,17 +1,17 @@
-module.exports = function(grunt) { 
+module.exports = function(grunt) {
   grunt.initConfig({
     pkg: '<json:package.json>',
 
     meta: {
       banner:
-        '/*\n' + 
+        '/*\n' +
         ' * <%= pkg.title || pkg.name %>: <%= pkg.description %>\n' +
-        ' * Version <%= pkg.version %>\n' + 
+        ' * Version <%= pkg.version %>\n' +
         ' *\n' +
         ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> (<%= pkg.author.url %>)\n' +
         ' *\n' +
         ' * Licensed under the <%= pkg.licenses[0].type %> license (<%= pkg.licenses[0].url %>)\n' +
-        ' *\n' + 
+        ' *\n' +
         ' */\n'
     },
 
@@ -29,15 +29,7 @@ module.exports = function(grunt) {
 
     watch: {
       coffee: {
-        files: ['js/*.coffee'],
-        tasks: 'coffee growl:coffee'
-      }
-    },
-
-    growl: {
-      coffee: {
-        title: 'CoffeeScript',
-        message: 'Compiled successfully'
+        files: ['js/*.coffee']
       }
     },
 
@@ -47,7 +39,7 @@ module.exports = function(grunt) {
         dest: 'js/<%= pkg.name %>.min.js'
       }
     },
-    
+
     compress: {
       zip: {
         files: {
@@ -59,7 +51,6 @@ module.exports = function(grunt) {
 
   // Lib tasks.
   grunt.loadNpmTasks('grunt-contrib');
-  grunt.loadNpmTasks('grunt-growl');
 
   // Default task.
   grunt.registerTask('build', 'coffee min');

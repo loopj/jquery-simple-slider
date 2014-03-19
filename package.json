@@ -23,8 +23,7 @@
   }],
   "devDependencies" : {
     "grunt" : "0.3.x",
-    "grunt-contrib": "0.2.x",
-    "grunt-growl": "git://github.com/loopj/grunt-growl.git#master"
+    "grunt-contrib": "0.2.x"
   },
   "scripts": {
     "test": "grunt"
