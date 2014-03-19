@@ -61,7 +61,7 @@ var __slice = [].slice,
         });
       }
       this.dragger.css({
-        marginTop: this.dragger.outerWidth() / -2,
+        marginTop: this.dragger.outerHeight() / -2,
         marginLeft: this.dragger.outerWidth() / -2
       });
       this.track.mousedown(function(e) {
