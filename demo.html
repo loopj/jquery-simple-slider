@@ -74,6 +74,9 @@
       $(this)
         .nextAll(".output:first")
           .html(data.value.toFixed(3));
+    })
+    .bind("slider:hold", function (event, data) {
+      console.log('I am being held');
     });
   </script>
 </body>
