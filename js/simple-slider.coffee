@@ -113,6 +113,11 @@
             # Revert the cursor
             $("body").css cursor: "auto"
 
+            if @hasExceededMaximumValue
+              @hasExceededMaximumValue = false
+              @track.removeClass "out-of-bounds"
+              @setValue(@value)
+
       # Set slider initial position
       @pagePos = 0
       
@@ -201,6 +206,21 @@
 
         # Trigger value changed events
         value = @ratioToValue(ratio)
+
+        # ask if value is OK, value is changed to max if not good
+        eventData =
+          current_value: @value
+          new_value: value
+          el: @slider
+
+        @input.trigger('slider:confirm-value', eventData)
+        if eventData.new_value != value
+          @hasExceededMaximumValue = true
+          @track.addClass "out-of-bounds"
+          value = eventData.new_value
+        else
+          @track.removeClass "out-of-bounds"
+
         @valueChanged(value, ratio, "domDrag")
 
         # Update the position of the slider on the screen
