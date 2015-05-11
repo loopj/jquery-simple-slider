@@ -1,5 +1,6 @@
 {
   "name"            : "simple-slider",
+  "main"            : "./js/simple-slider.js",
   "title"           : "jQuery Simple Slider",
   "description"     : "Unobtrusive Numerical Slider",
   "version"         : "1.0.0",
