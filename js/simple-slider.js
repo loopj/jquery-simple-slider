@@ -14,8 +14,7 @@ var __slice = [].slice,
   SimpleSlider = (function() {
 
     function SimpleSlider(input, options) {
-      var ratio,
-        _this = this;
+      var _this = this;
       this.input = input;
       this.defaultOptions = {
         animate: true,
@@ -78,6 +77,7 @@ var __slice = [].slice,
         }
         _this.dragging = true;
         _this.dragger.addClass("dragging");
+        _this.input.trigger("slider:drag-started", _this._makeEventData());
         _this.domDrag(e.pageX, e.pageY);
         return false;
       });
@@ -92,6 +92,9 @@ var __slice = [].slice,
         if (_this.dragging) {
           _this.dragging = false;
           _this.dragger.removeClass("dragging");
+          _this.input.trigger("slider:drag-ended", _this._makeEventData());
+          // Post final position here
+          _this.domDrag(e.pageX, e.pageY, false);
           return $("body").css({
             cursor: "auto"
           });
@@ -105,13 +108,7 @@ var __slice = [].slice,
         this.value = this.nearestValidValue(this.input.val());
       }
       this.setSliderPositionFromValue(this.value);
-      ratio = this.valueToRatio(this.value);
-      this.input.trigger("slider:ready", {
-        value: this.value,
-        ratio: ratio,
-        position: ratio * this.slider.outerWidth(),
-        el: this.slider
-      });
+      this.input.trigger("slider:ready", this._makeEventData());
     }
 
     SimpleSlider.prototype.createDivElement = function(classname) {
@@ -292,14 +289,20 @@ var __slice = [].slice,
         return;
       }
       this.value = value;
-      eventData = {
-        value: value,
-        ratio: ratio,
-        position: ratio * this.slider.outerWidth(),
+      eventData = this._makeEventData(value, ratio, trigger);
+      return this.input.val(value).trigger($.Event("change", eventData)).trigger("slider:changed", eventData);
+    };
+
+    SimpleSlider.prototype._makeEventData = function(value, ratio, trigger) {
+      var v = value || this.value,
+          r = ratio || this.valueToRatio(v);
+      return {
+        value: v,
+        ratio: r,
+        position: r * this.slider.outerWidth(),
         trigger: trigger,
         el: this.slider
       };
-      return this.input.val(value).trigger($.Event("change", eventData)).trigger("slider:changed", eventData);
     };
 
     return SimpleSlider;
@@ -351,7 +354,7 @@ var __slice = [].slice,
       if ($el.data("slider-theme")) {
         settings.theme = $el.data("slider-theme");
       }
-      if ($el.attr("data-slider-highlight")) {
+      if ($el.data("slider-highlight")) {
         settings.highlight = $el.data("slider-highlight");
       }
       if ($el.data("slider-animate") != null) {
