@@ -78,6 +78,15 @@ var __slice = [].slice,
         }
         _this.dragging = true;
         _this.dragger.addClass("dragging");
+        ratio = _this.valueToRatio(this.value);
+        var eventData = {
+          value: _this.value,
+          ratio: ratio,
+          position: ratio * _this.slider.outerWidth(),
+          el: _this.slider
+        };
+
+        _this.input.trigger("slider:drag-started", eventData);
         _this.domDrag(e.pageX, e.pageY);
         return false;
       });
@@ -92,6 +101,17 @@ var __slice = [].slice,
         if (_this.dragging) {
           _this.dragging = false;
           _this.dragger.removeClass("dragging");
+          ratio = _this.valueToRatio(this.value);
+          var eventData = {
+            value: _this.value,
+            ratio: ratio,
+            position: ratio * _this.slider.outerWidth(),
+            el: _this.slider
+          };
+
+          _this.input.trigger("slider:drag-ended", eventData);
+          // Post final position here
+          _this.domDrag(e.pageX, e.pageY, false);
           return $("body").css({
             cursor: "auto"
           });
